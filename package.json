@@ -15,10 +15,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/tbolis/react-sketch.git"
+    "url": "https://github.com/bbatta38/react-sketch.git"
   },
   "bugs": {
-    "url": "https://github.com/tbolis/react-sketch/issues"
+    "url": "https://github.com/bbatta38/react-sketch/issues"
   },
   "license": "MIT",
   "main": "./dist",
