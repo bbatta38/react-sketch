@@ -702,13 +702,13 @@ class SketchField extends PureComponent {
     }
 
     if (this.props.tool !== prevProps.tool) {
-      this._selectedTool = this._tools[this.props.tool];
-      //Bring the cursor back to default if it is changed by a tool
-      this._fc.defaultCursor = "default";
-      if (this._selectedTool) {
-        this._selectedTool.configureCanvas(this.props);
-      }
+      this._selectedTool =
+        this._tools[this.props.tool] || this._tools[Tool.Pencil];
     }
+
+    //Bring the cursor back to default if it is changed by a tool
+    this._fc.defaultCursor = "default";
+    this._selectedTool.configureCanvas(this.props);
 
     if (this.props.backgroundColor !== prevProps.backgroundColor) {
       this._backgroundColor(this.props.backgroundColor);
