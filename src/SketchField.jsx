@@ -312,36 +312,43 @@ class SketchField extends PureComponent {
     let prevHeight = canvasHeight || canvas.getHeight();
     let wfactor = (offsetWidth - widthCorrection) / prevWidth;
     let hfactor = (clientHeight - heightCorrection) / prevHeight;
-    canvas.setWidth(offsetWidth - widthCorrection);
-    canvas.setHeight(clientHeight - heightCorrection);
-    if (canvas.backgroundImage) {
-      // Need to scale background images as well
-      let bi = canvas.backgroundImage;
-      bi.scaleX = clientWidth / bi.width;
-      bi.scaleY = clientHeight / bi.height;
-    }
-    let objects = canvas.getObjects();
-    for (let i in objects) {
-      let obj = objects[i];
-      let scaleX = obj.scaleX;
-      let scaleY = obj.scaleY;
-      let left = obj.left;
-      let top = obj.top;
-      let tempScaleX = scaleX * wfactor;
-      let tempScaleY = scaleY * hfactor;
-      let tempLeft = left * wfactor;
-      let tempTop = top * hfactor;
-      obj.scaleX = tempScaleX;
-      obj.scaleY = tempScaleY;
-      obj.left = tempLeft;
-      obj.top = tempTop;
-      obj.setCoords();
-    }
-    this.setState({
-      parentWidth: offsetWidth,
-    });
-    canvas.renderAll();
-    canvas.calcOffset();
+    // canvas.setWidth(offsetWidth - widthCorrection);
+    // canvas.setHeight(clientHeight - heightCorrection);
+    canvas.setDimensions(
+      {
+        width: `${offsetWidth - widthCorrection}px`,
+        height: `${clientHeight - heightCorrection}px`,
+      },
+      { cssOnly: true }
+    );
+    // if (canvas.backgroundImage) {
+    //   // Need to scale background images as well
+    //   let bi = canvas.backgroundImage;
+    //   bi.scaleX = clientWidth / bi.width;
+    //   bi.scaleY = clientHeight / bi.height;
+    // }
+    // let objects = canvas.getObjects();
+    // for (let i in objects) {
+    //   let obj = objects[i];
+    //   let scaleX = obj.scaleX;
+    //   let scaleY = obj.scaleY;
+    //   let left = obj.left;
+    //   let top = obj.top;
+    //   let tempScaleX = scaleX * wfactor;
+    //   let tempScaleY = scaleY * hfactor;
+    //   let tempLeft = left * wfactor;
+    //   let tempTop = top * hfactor;
+    //   obj.scaleX = tempScaleX;
+    //   obj.scaleY = tempScaleY;
+    //   obj.left = tempLeft;
+    //   obj.top = tempTop;
+    //   obj.setCoords();
+    // }
+    // this.setState({
+    //   parentWidth: offsetWidth,
+    // });
+    // canvas.renderAll();
+    // canvas.calcOffset();
   };
 
   /**
@@ -598,7 +605,11 @@ class SketchField extends PureComponent {
     }
     let img = new Image();
     img.setAttribute("crossOrigin", "anonymous");
-    img.onload = () =>
+    img.onload = () => {
+      this.setState({
+        imageWidth: img.width,
+        imageHeight: img.height,
+      });
       canvas.setBackgroundImage(
         new fabric.Image(img),
         () => canvas.renderAll(),
@@ -607,6 +618,7 @@ class SketchField extends PureComponent {
           scaleY: canvas.height / img.height,
         }
       );
+    };
     img.src = dataUrl;
   };
 
@@ -698,6 +710,15 @@ class SketchField extends PureComponent {
       this.props.width !== prevProps.width ||
       this.props.height !== prevProps.height
     ) {
+      this._resize();
+    }
+
+    if (
+      this.state.imageWidth !== prevState.imageWidth ||
+      this.state.imageHeight !== prevState.imageHeight
+    ) {
+      this._fc.setWidth(this.state.imageWidth);
+      this._fc.setHeight(this.state.imageHeight);
       this._resize();
     }
 
